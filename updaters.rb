@@ -1,65 +1,13 @@
 # Function for checking if the right fields are in the Attribute table
 def check_attribute_fields(con)
-	# Check for Warranty start date
-	if not con.query("SELECT name FROM Attribute WHERE name = 'Warranty start'").count > 0
-		con.query("INSERT INTO Attribute (id,type,name) VALUES (10000,'date','Warranty start')")
-		con.query("INSERT INTO AttributeMap (objtype_id,attr_id) VALUES (4,10000)")
-	end
-
-	# Check for Warranty Level
-	if not con.query("SELECT name FROM Attribute WHERE name = 'Warranty level'").count > 0
-		con.query("INSERT INTO Attribute (id,type,name) VALUES (10001,'string','Warranty level')")
-		con.query("INSERT INTO AttributeMap (objtype_id,attr_id) VALUES (4,10001)")
-	end
-
-	# Check for CPU cores
-	if not con.query("SELECT name FROM Attribute WHERE name = 'CPU cores'").count > 0
-		con.query("INSERT INTO Attribute (id,type,name) VALUES (10002,'uint','CPU cores')")
-		con.query("INSERT INTO AttributeMap (objtype_id,attr_id) VALUES (4,10002)")
-	end
-
-	# Check for RAM
-	if not con.query("SELECT name FROM Attribute WHERE name = 'RAM'").count > 0
-		con.query("INSERT INTO Attribute (id,type,name) VALUES (10003,'string','RAM')")
-		con.query("INSERT INTO AttributeMap (objtype_id,attr_id) VALUES (4,10003)")
-	end
-
-	# Check for Serial Number
-	if not con.query("SELECT name FROM Attribute WHERE name = 'Serial number'").count > 0
-		con.query("INSERT INTO Attribute (id,type,name) VALUES (10004,'string','Serial number')")
-		con.query("INSERT INTO AttributeMap (objtype_id,attr_id) VALUES (4,10004)")
-	end
-
-	# Check for Product name
-	if not con.query("SELECT name FROM Attribute WHERE name = 'Product name'").count > 0
-		con.query("INSERT INTO Attribute (id,type,name) VALUES (10005,'string','Product name')")
-		con.query("INSERT INTO AttributeMap (objtype_id,attr_id) VALUES (4,10005)")
-	end
-
-	# Check for Operating system
-	if not con.query("SELECT name FROM Attribute WHERE name = 'Operating system'").count > 0
-		con.query("INSERT INTO Attribute (id,type,name) VALUES (10006,'string','Operating system')")
-		con.query("INSERT INTO AttributeMap (objtype_id,attr_id) VALUES (4,10006)")
-		con.query("INSERT INTO AttributeMap (objtype_id,attr_id) VALUES (1504,10006)")
-	end
-
-	# Check for Operating system release
-	if not con.query("SELECT name FROM Attribute WHERE name = 'Operating system release'").count > 0
-		con.query("INSERT INTO Attribute (id,type,name) VALUES (10007,'string','Operating system release')")
-		con.query("INSERT INTO AttributeMap (objtype_id,attr_id) VALUES (4,10007)")
-		con.query("INSERT INTO AttributeMap (objtype_id,attr_id) VALUES (1504,10007)")
-	end
-
-	# Check for Processor
-	if not con.query("SELECT name FROM Attribute WHERE name = 'Processor'").count > 0
-		con.query("INSERT INTO Attribute (id,type,name) VALUES (10008,'string','Processor')")
-		con.query("INSERT INTO AttributeMap (objtype_id,attr_id) VALUES (4,10008)")
-	end
-
-	# Check for Warranty End date
-	if not con.query("SELECT name FROM Attribute WHERE name = 'Warranty end'").count > 0
-		con.query("INSERT INTO Attribute (id,type,name) VALUES (10009,'date','Warranty end')")
-		con.query("INSERT INTO AttributeMap (objtype_id,attr_id) VALUES (4,10009)")
+	
+	RTPIConfig::ATTRIBUTES.each do |attr|
+		if not con.query("SELECT name FROM Attribute WHERE name = '#{attr[:name]}'").count > 0
+			con.query("INSERT INTO Attribute (id,type,name) VALUES (#{attr[:id]},'#{attr[:type]}','#{attr[:name]}')")
+			attr[:servers].each do |server|
+				con.query("INSERT INTO AttributeMap (objtype_id,attr_id) VALUES (#{server},#{attr[:id]})")
+			end
+		end
 	end
 
 end
